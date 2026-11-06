@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deck Viewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ivory:#F0EEE6; --cream:#FAF9F5; --ink:#141413; --clay:#D97757; --slate:#5E5D59;
+  --border:#E8E6DC; --olive:#788C5D; --sky:#6A9BCC; --clay-soft:#F3D9CC;
+  --serif:"Source Serif 4",Georgia,serif; --sans:Inter,system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:var(--sans);color:var(--ink);background:
+  radial-gradient(120% 60% at 50% 115%,#E6E3D6 0 45%,transparent 46%),
+  radial-gradient(90% 50% at 15% 120%,#E0DDCE 0 40%,transparent 41%),
+  linear-gradient(180deg,var(--cream),var(--ivory));
+  background-attachment:fixed;padding-bottom:64px}
+header{padding:28px 32px 6px;max-width:1500px;margin:0 auto}
+.phase{font:500 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--clay)}
+.phase::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--clay);margin-right:8px;animation:pulse 1.2s infinite}
+.phase.done::before{animation:none;background:var(--olive)}
+h1.title{font:600 34px/1.15 var(--serif);margin:8px 0 0;min-height:40px}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr));gap:26px;padding:22px 32px;max-width:1500px;margin:0 auto}
+
+/* window chrome */
+.win{border-radius:10px 10px 4px 4px;background:var(--cream);border:1px solid #CFCBBA;
+  box-shadow:0 1px 0 #fff inset,0 10px 28px rgba(20,20,19,.14),0 2px 5px rgba(20,20,19,.1);
+  overflow:hidden;opacity:0;transform:scale(.82);animation:open .45s cubic-bezier(.2,1.2,.4,1) forwards}
+.bar{display:flex;align-items:center;gap:8px;height:28px;padding:0 6px 0 10px;
+  background:linear-gradient(180deg,#F6DDD0 0%,#EBB79F 48%,#E3A184 52%,#E9B79F 100%);
+  border-bottom:1px solid #C98A6E;box-shadow:inset 0 1px 0 rgba(255,255,255,.7);color:#3a1d10}
+.bar .n{font:500 11px var(--mono);background:rgba(255,255,255,.55);border-radius:3px;padding:1px 5px}
+.bar .t{flex:1;font:600 12px var(--sans);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 0 rgba(255,255,255,.5)}
+.btns{display:flex;gap:3px}
+.btns i{width:17px;height:17px;border-radius:4px;border:1px solid rgba(80,40,20,.35);background:linear-gradient(180deg,#FFF6F0,#F0D3C3);box-shadow:inset 0 1px 0 #fff;display:block}
+.btns i:last-child{background:linear-gradient(180deg,#E99677,#C9603F);border-color:#9c4128}
+.body{position:relative;aspect-ratio:16/9;background:var(--cream);overflow:hidden}
+.stage{position:absolute;left:0;top:0;width:960px;height:540px;transform-origin:0 0;opacity:0}
+.win.pending .body{opacity:.45;filter:grayscale(.5)}
+.win.pending{cursor:default}
+.win.done{cursor:pointer}
+.win.done:hover{box-shadow:0 1px 0 #fff inset,0 14px 34px rgba(20,20,19,.2)}
+.win.drafting{animation:open .45s cubic-bezier(.2,1.2,.4,1) forwards,glow 1.6s ease-in-out .5s infinite}
+.win.flash{animation:open .01s forwards,flash .9s ease-out}
+.skel{position:absolute;inset:0;padding:8% 9%;display:flex;flex-direction:column;gap:12px;opacity:0;transition:opacity .4s;pointer-events:none}
+.win.drafting .skel{opacity:1}
+.skel b{display:block;height:11px;border-radius:6px;background:linear-gradient(90deg,var(--border) 25%,#F7E4DA 50%,var(--border) 75%);background-size:200% 100%;animation:shimmer 1.3s linear infinite}
+.skel b:first-child{height:18px;width:55%}
+.skel span{margin-top:auto;font:500 12px var(--mono);color:var(--clay);letter-spacing:.04em}
+.win.done .stage{animation:zoomin .6s ease-out forwards}
+.win.done .skel{opacity:0}
+.tools{position:absolute;inset:0;color:#4A4945}
+.tools svg{position:absolute;top:50%;height:30%}
+.tools .gear{left:50%;transform:translate(-50%,-50%);height:34%;padding:10px;border-radius:50%;background:rgba(250,249,245,.85);animation:spin 3s linear infinite}
+.tools .ham{top:30%;left:7%;transform-origin:50% 95%;animation:hammer .7s cubic-bezier(.5,0,.9,.4) infinite alternate}
+.tools .ham.r{left:auto;right:7%;--m:-1;animation-delay:.35s}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes hammer{from{transform:scaleX(var(--m,1)) rotate(-10deg)}to{transform:scaleX(var(--m,1)) rotate(-62deg)}}
+
+/* taskbar */
+#task{position:fixed;left:0;right:0;bottom:0;height:44px;display:flex;align-items:center;gap:14px;padding:0 14px;
+  background:linear-gradient(180deg,#3b3a37,#141413);border-top:2px solid var(--clay);color:var(--ivory);z-index:5}
+#task .start{font:600 12px var(--sans);padding:5px 14px;border-radius:14px;background:linear-gradient(180deg,#E48F72,#C9603F);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+#log{flex:1;font:400 13px var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#log::after{content:"▌";color:var(--clay);animation:blink 1s steps(1) infinite;margin-left:2px}
+#prog{display:flex;align-items:center;gap:8px;font:500 12px var(--mono);color:var(--border)}
+#prog .track{width:110px;height:10px;border-radius:5px;background:#2a2a28;border:1px solid #5E5D59;overflow:hidden}
+#prog .fill{height:100%;width:0;background:repeating-linear-gradient(90deg,var(--clay) 0 8px,#F0A98C 8px 10px);transition:width .5s}
+
+/* overlay */
+#ov{position:fixed;inset:0;background:rgba(20,20,19,.62);display:none;align-items:center;justify-content:center;z-index:10;backdrop-filter:blur(3px)}
+#ov.on{display:flex}
+#ov .win{width:min(90vw,calc(90vh * 16 / 9 - 40px));animation:open .3s forwards;cursor:default}
+#toast{position:fixed;left:50%;bottom:64px;transform:translate(-50%,30px);background:var(--ink);color:var(--cream);padding:12px 22px;border-radius:10px;border-left:4px solid var(--clay);font:600 14px var(--serif);opacity:0;transition:.5s;z-index:20;pointer-events:none}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* slide content classes */
+.slide{width:960px;height:540px;padding:48px 64px;background:var(--cream);color:var(--ink);display:flex;flex-direction:column;gap:18px;font:400 20px/1.45 var(--sans);overflow:hidden}
+.slide h1{font:700 48px/1.1 var(--serif);margin:0}
+.slide h2{font:600 32px/1.2 var(--serif);margin:0}
+.slide .kicker{font:500 14px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--clay)}
+.slide .lead{font-size:24px;line-height:1.45;color:var(--slate);margin:0}
+.slide .cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.slide .cols-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.slide .card{border:1px solid var(--border);border-radius:12px;background:#fff;padding:18px 22px}
+.slide .stat-num{font:700 56px/1 var(--serif);color:var(--clay)}
+.slide .stat-label{font-size:16px;color:var(--slate);margin-top:6px}
+.slide .pill{display:inline-block;align-self:flex-start;font:500 13px var(--mono);padding:3px 12px;border-radius:999px;background:var(--clay-soft);color:#8a3f22}
+.slide ul.bullets{margin:0;padding-left:26px;display:flex;flex-direction:column;gap:8px}
+.slide ul.bullets li::marker{color:var(--clay)}
+.slide table.tbl{border-collapse:collapse;width:100%;font-size:18px}
+.slide .tbl th{text-align:left;font:500 13px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--slate);border-bottom:2px solid var(--ink);padding:8px 10px}
+.slide .tbl td{padding:9px 10px;border-bottom:1px solid var(--border)}
+.slide .accent{color:var(--clay)}
+.slide .muted{color:var(--slate)}
+.slide .footer{margin-top:auto;font:400 13px var(--mono);color:var(--slate);border-top:1px solid var(--border);padding-top:10px}
+
+@keyframes open{to{opacity:1;transform:scale(1)}}
+@keyframes zoomin{from{opacity:0;transform:scale(var(--s)) translateY(10px)}to{opacity:1;transform:scale(var(--s))}}
+@keyframes shimmer{to{background-position:-200% 0}}
+@keyframes glow{50%{box-shadow:0 0 0 3px rgba(217,119,87,.45),0 0 26px rgba(217,119,87,.5),0 10px 28px rgba(20,20,19,.14)}}
+@keyframes flash{0%{box-shadow:0 0 0 4px var(--clay),0 0 40px var(--clay)}100%{box-shadow:0 10px 28px rgba(20,20,19,.14)}}
+@keyframes pulse{50%{opacity:.3}}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .win{opacity:1;transform:none}
+  .win.done .stage{opacity:1}
+}
+</style>
+</head>
+<body>
+<header><div class="phase" id="phase">starting</div><h1 class="title" id="title">&nbsp;</h1></header>
+<main id="grid"></main>
+<div id="task"><span class="start">Deck Studio</span><div id="log"></div>
+  <div id="prog"><span id="pt">0/0 done</span><div class="track"><div class="fill" id="pf"></div></div></div></div>
+<div id="ov"></div>
+<div id="toast">Deck complete</div>
+<script>
+const $ = s => document.querySelector(s), grid = $("#grid"), ov = $("#ov");
+const HAMMER = `<svg class="ham" viewBox="0 0 24 40"><rect x="10.5" y="9" width="3" height="30" rx="1.5" fill="currentColor"/><rect x="2" y="2" width="20" height="9" rx="2" fill="currentColor"/></svg>`;
+const frames = [], revs = {}, html = {}; let built = false, curLog = "", typeTimer, shown = -1, celebrated = false;
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function typeLog(text) {
+  clearInterval(typeTimer); const el = $("#log"); let i = 0;
+  typeTimer = setInterval(() => { el.textContent = text.slice(0, ++i); if (i >= text.length) clearInterval(typeTimer); }, 14);
+}
+function build(slides) {
+  built = true;
+  slides.forEach((s, i) => {
+    const w = document.createElement("div");
+    w.className = "win pending"; w.style.animationDelay = i * 150 + "ms"; w.style.opacity = 0;
+    w.innerHTML = `<div class="bar"><span class="n">${s.n}</span><span class="t">${esc(s.title)}</span>
+      <span class="btns"><i></i><i></i><i></i></span></div>
+      <div class="body"><div class="stage"></div>
+      <div class="skel"><b></b><b></b><b style="width:90%"></b><b style="width:75%"></b><b style="width:82%"></b><span>Coordinator drafting…</span>
+        <div class="tools"><svg class="gear" viewBox="-24 -24 48 48"><circle r="18" fill="none" stroke="currentColor" stroke-width="7" stroke-dasharray="7.07 7.07"/><circle r="15" fill="currentColor"/><circle r="5.5" fill="#FAF9F5"/></svg>${HAMMER}${HAMMER.replace('class="ham"', 'class="ham r"')}</div></div></div>`;
+    w.onclick = () => frames[i].status === "done" && openSlide(i);
+    grid.appendChild(w);
+    frames.push({ el: w, n: s.n, status: "pending" });
+  });
+  rescale();
+}
+function scaleOf(body) { return body.clientWidth / 960; }
+function rescale() {
+  frames.forEach(f => { const b = f.el.querySelector(".body"), st = f.el.querySelector(".stage"), s = scaleOf(b);
+    st.style.setProperty("--s", s); st.style.transform = `scale(${s})`; });
+  const big = ov.querySelector(".body"); if (big) { const st = big.querySelector(".stage"), s = scaleOf(big); st.style.setProperty("--s", s); st.style.transform = `scale(${s})`; }
+}
+async function loadSlide(f, i) {
+  try {
+    const r = await fetch(`slide-${f.n}.html?t=${Date.now()}`, { cache: "no-store" });
+    if (!r.ok) return; html[f.n] = await r.text();
+    const st = f.el.querySelector(".stage"); st.innerHTML = html[f.n];
+    st.style.opacity = 1; rescale();
+    f.el.classList.remove("flash"); void f.el.offsetWidth; f.el.classList.add("flash");
+  } catch (e) {}
+}
+function update(slides) {
+  slides.forEach((s, i) => {
+    const f = frames[i]; if (!f) return;
+    if (f.status !== s.status) { f.status = s.status; f.el.classList.remove("pending", "drafting", "done"); f.el.classList.add(s.status);
+      if (s.status === "drafting") f.el.style.animationDelay = "0ms"; }
+    if (s.status === "done" && revs[s.n] !== s.rev) { revs[s.n] = s.rev; loadSlide(f, i); }
+  });
+  const d = slides.filter(s => s.status === "done").length;
+  $("#pt").textContent = `${d}/${slides.length} done`; $("#pf").style.width = (slides.length ? d / slides.length * 100 : 0) + "%";
+}
+function openSlide(i) {
+  shown = i; const f = frames[i];
+  ov.innerHTML = `<div class="win"><div class="bar"><span class="n">${f.n}</span><span class="t">${esc(f.el.querySelector(".t").textContent)}</span>
+    <span class="btns"><i></i><i></i><i></i></span></div><div class="body"><div class="stage" style="opacity:1">${html[f.n] || ""}</div></div></div>`;
+  ov.classList.add("on"); rescale();
+}
+const closeSlide = () => { ov.classList.remove("on"); ov.innerHTML = ""; shown = -1; };
+ov.onclick = e => { if (!e.target.closest(".body")) closeSlide(); };
+document.addEventListener("keydown", e => {
+  if (shown < 0) return;
+  if (e.key === "Escape") return closeSlide();
+  const dir = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+  for (let j = shown + dir; dir && j >= 0 && j < frames.length; j += dir) if (frames[j].status === "done") { openSlide(j); break; }
+});
+addEventListener("resize", rescale);
+
+function celebrate() {
+  if (celebrated) return; celebrated = true;
+  const t = $("#toast"); t.classList.add("on"); setTimeout(() => t.classList.remove("on"), 4000);
+}
+async function poll() {
+  try {
+    const r = await fetch(`state.json?t=${Date.now()}`, { cache: "no-store" });
+    if (r.ok) {
+      const st = await r.json();
+      if (st.title) $("#title").textContent = st.title;
+      const ph = $("#phase"); ph.textContent = st.phase || "starting"; ph.classList.toggle("done", st.phase === "done");
+      if (st.log && st.log !== curLog) { curLog = st.log; typeLog(curLog); }
+      if (st.slides && st.slides.length) { if (!built) build(st.slides); update(st.slides); }
+      if (st.phase === "done") celebrate();
+    }
+  } catch (e) {}
+  setTimeout(poll, 1000);
+}
+poll();
+</script>
+</body>
+</html>

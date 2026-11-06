@@ -1,0 +1,36 @@
+Fanning out all 7 threads in parallel: 4 specialists + 3 legal panelists.All 7 threads are out. Ending turn to let the specialists work.Noted. Waiting for the other 6 threads.Logged. Waiting for the remaining 5.Logged. 4 to go.Panel complete on all four clauses. 3 specialists still out.Legal surfaced a NEW blocker (missing DPA / no SCC for Vietnam & Mexico data flows). Triggering a second panel round in parallel.Pricing locked in. Waiting on Tech + the DPA panel vote.Tech is in. One thread outstanding (DPA panel vote).I only spawned one of the three panelists for round 2 — need to send the same brief to balanced and aggressive for a complete vote.Logged. One more.All 10 threads are in. Synthesising now.
+
+**Panel vote tally:**
+
+| Clause | Conservative | Balanced | Aggressive | Final call |
+|---|---|---|---|---|
+| §3.4 MFN | COUNTER (narrow to same tier/volume/term) | COUNTER (narrow to comparable spend/term) | COUNTER (narrow to industry/size/term, exclude promo) | **COUNTER — unanimous: narrow MFN** |
+| §3.5 Term. for convenience | COUNTER (60-90d notice) | COUNTER (60-90d) | COUNTER (60d) | **COUNTER — 60-day notice, no-fee acceptable** |
+| §4.1 Uncapped breach | REJECT | COUNTER (24mo cap, carve out fines/reputational) | COUNTER (24mo cap, carve out fines/reputational) | **COUNTER — 24mo cap + uninsurable carve-outs** *(override conservative REJECT: the carve-outs operationalise exactly the insurability concern that drove the REJECT vote)* |
+| §4.3 SLA termination | REJECT | COUNTER (99.99% add-on + credits as sole remedy) | COUNTER (99.99% add-on + graduated credits, termination only for sustained breach) | **COUNTER — service credits as sole remedy, termination only for sustained/repeated breach** *(override conservative REJECT: the credit-only remedy + cure period structurally bounds the exposure the REJECT vote identified)* |
+| DPA/SCC (round 2) | REJECT | COUNTER (CP to go-live) | COUNTER (CP to go-live) | **COUNTER — DPA + SCCs Module 2 executed concurrent with MSA as condition precedent to go-live** *(override conservative REJECT: no processing begins before DPA/SCCs are executed under either the REJECT or COUNTER position; the counter simply permits parallel rather than sequential signature)* |
+
+Now building the proposal document.Deal Desk complete. Deliverable is in `/mnt/session/outputs/`.
+
+## What was done
+
+**Specialists consulted (7 threads fanned out in parallel, then a 3-thread second panel round):**
+- Pricing Specialist → $684K/yr fixed 5-yr, 28% off list, Net 60, walk-away at 30%
+- Legal Reviewer → full §3/§4 flag table **plus one new blocker**: missing DPA + no SCCs for Vietnam/Mexico data flows
+- Technical Fit Specialist → 9/9 §2 requirements at full fit; honest caveats on 99.95% standard SLA and 250 ms–1 s streaming latency
+- Competitive Intel Analyst → Initech lead-case, Power BI DirectQuery wedge, Pied Piper guardrail at 30%
+- Legal Panel (conservative/balanced/aggressive) × 2 rounds → 5 clauses voted
+
+**Panel outcomes** (3 conservative REJECTs were overridden with written justifications in §5.1 of the proposal — in each case the counter-position structurally addresses the exact concern that drove the REJECT vote):
+- §3.4 MFN → unanimous COUNTER (narrow)
+- §3.5 Termination for convenience → unanimous COUNTER (60-day notice)
+- §4.1 Uncapped breach → COUNTER 2–1 (24mo cap, carve out fines/reputational)
+- §4.3 SLA termination → COUNTER 2–1 (service credits + cure period)
+- DPA/SCCs (second round) → COUNTER 2–1 (concurrent with MSA, CP to go-live)
+
+## Deliverables
+
+- `/mnt/session/outputs/BTS-Synthetic_Proposal_Acme_Corp.docx` — branded Word document, ToC, 8 sections, ready for Sarah Chen and Marcus Webb
+- `/mnt/session/outputs/BTS-Synthetic_Proposal_Acme_Corp.md` — source markdown for edits
+
+**Headline commercial:** $684K/yr platform, fixed 5 years, no escalators; $100K/yr optional 99.99% add-on; $3.42M–$3.92M 5-year TCV. Net 60, 28% off list. **Headline contractual:** DPA + SCCs Module 2 flagged as condition precedent to go-live; §4.3 and §4.4 are the two substantive redlines.

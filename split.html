@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agents + Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ivory:#F0EEE6; --cream:#FAF9F5; --ink:#141413; --clay:#D97757; --slate:#5E5D59; --border:#E8E6DC;
+  --serif:"Source Serif 4",Georgia,serif; --sans:Inter,system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+  --split:50%;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden}
+body{display:flex;font-family:var(--sans);color:var(--ink);background:var(--ivory)}
+.pane{display:flex;flex-direction:column;min-width:0;padding:10px}
+#left{flex:0 0 var(--split)}
+#right{flex:1}
+.win{flex:1;display:flex;flex-direction:column;min-height:0;border-radius:10px 10px 4px 4px;background:var(--cream);border:1px solid #CFCBBA;
+  box-shadow:0 1px 0 #fff inset,0 10px 28px rgba(20,20,19,.14),0 2px 5px rgba(20,20,19,.1);overflow:hidden}
+.bar{display:flex;align-items:center;gap:8px;height:28px;padding:0 6px 0 10px;flex:none;
+  background:linear-gradient(180deg,#F6DDD0 0%,#EBB79F 48%,#E3A184 52%,#E9B79F 100%);
+  border-bottom:1px solid #C98A6E;box-shadow:inset 0 1px 0 rgba(255,255,255,.7);color:#3a1d10}
+.bar .t{flex:1;font:600 12px var(--sans);text-shadow:0 1px 0 rgba(255,255,255,.5)}
+.btns{display:flex;gap:3px}
+.btns i{width:17px;height:17px;border-radius:4px;border:1px solid rgba(80,40,20,.35);background:linear-gradient(180deg,#FFF6F0,#F0D3C3);box-shadow:inset 0 1px 0 #fff;display:block}
+.btns i:last-child{background:linear-gradient(180deg,#E99677,#C9603F);border-color:#9c4128}
+.body{flex:1;position:relative;min-height:0}
+iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--cream)}
+#wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;
+  font:400 13px var(--mono);color:var(--slate)}
+#wait::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--clay);margin-right:10px;animation:pulse 1.2s infinite}
+#wait.off{display:none}
+#div{flex:none;width:12px;cursor:col-resize;position:relative}
+#div::after{content:"";position:absolute;left:5px;top:50%;width:2px;height:48px;margin-top:-24px;border-radius:1px;background:var(--border)}
+#div:hover::after,.drag #div::after{background:var(--clay)}
+.drag{cursor:col-resize;user-select:none}
+.drag iframe{pointer-events:none}
+@keyframes pulse{50%{opacity:.3}}
+</style>
+</head>
+<body>
+<section class="pane" id="left"><div class="win"><div class="bar"><span class="t">Agents</span><span class="btns"><i></i><i></i><i></i></span></div>
+  <div class="body"><div id="wait"></div><iframe id="agents" title="Agents"></iframe></div></div></section>
+<div id="div"></div>
+<section class="pane" id="right"><div class="win"><div class="bar"><span class="t">Deck</span><span class="btns"><i></i><i></i><i></i></span></div>
+  <div class="body"><iframe src="index.html" title="Deck"></iframe></div></div></section>
+<script>
+const $ = s => document.querySelector(s), frame = $("#agents"), wait = $("#wait");
+const url = new URLSearchParams(location.search).get("agents") || "http://localhost:8766/";
+wait.textContent = `Waiting for agent view at ${url}…`;
+frame.style.visibility = "hidden";
+(function probe() {
+  fetch(url, { mode: "no-cors", cache: "no-store" })
+    .then(() => { frame.src = url; frame.style.visibility = "visible"; wait.classList.add("off"); })
+    .catch(() => setTimeout(probe, 2000));
+})();
+const bar = $("#div");
+bar.onpointerdown = e => { bar.setPointerCapture(e.pointerId); document.body.classList.add("drag"); };
+bar.onpointermove = e => {
+  if (!bar.hasPointerCapture(e.pointerId)) return;
+  document.body.style.setProperty("--split", Math.min(80, Math.max(20, e.clientX / innerWidth * 100)) + "%");
+};
+bar.onpointerup = () => document.body.classList.remove("drag");
+</script>
+</body>
+</html>

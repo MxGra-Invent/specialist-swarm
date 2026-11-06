@@ -1,0 +1,23 @@
+Now spawning all four specialists in parallel. Each gets the RFP path, their working directory, and a narrow brief.All four specialists are working in parallel. Ending turn to await their replies.The uploaded files were inline-only, not on disk. Writing them to the shared workspace now.Solid work from competitive. Waiting on the other three.Technical is done and strong. Waiting on pricing and legal.Legal is solid. Just pricing left.All four specialists in. Cross-check is clean — the 99.99% SLA appears consistently (tech says standard is 99.95%, legal flags termination clause, pricing has priced the $100K uplift). Now synthesising into a branded Word document.Proposal built and saved. Final deliverable: `/mnt/session/outputs/BTS-Synthetic_Proposal_Acme-Corp_EDP.docx` — ~3,200 words, 12 tables, BTS-Synthetic branded (navy/teal palette, cover page, section rules, shaded tables).
+
+**Specialists → sections mapping**
+
+| Section | Source | Headline position |
+|---|---|---|
+| Executive summary | Senior Partner synthesis | 3 bullets — Technical fit, Commercial posture, Contract posture |
+| Our understanding | RFP directly | Frames the three decisive capabilities |
+| Why BTS-Synthetic | Technical Fit + Competitive Intel | 8/9 full-fit table; per-competitor positioning; 3 differentiators |
+| Commercial proposal | Pricing Specialist | **$704K ACV opening (20% off), ~$3.93M 5-year, Teradata migration $350K one-time** |
+| Contract approach | Legal Reviewer | 5 deal-breakers + 2 major clauses with counter-positions in a single redline table |
+| Implementation plan | Technical Fit | 6 milestones, 20–24 weeks |
+| References | Technical Fit (archetypes) | Real names deferred to shortlist/NDA |
+| Risks and mitigations | All four specialists, merged | 7 risks: 99.99% SLA, latency ambiguity, Teradata complexity, topology ambiguity, 35% price pressure, redline timeline, Fabric bundling |
+
+**Key decisions I made as Senior Partner**
+- Held the discount line at 20%/25% per Pricing; refused the 35% floor Acme demanded. The TCO narrative is our weapon, not price matching.
+- Accepted all five of Legal's "deal-breaker" redlines and surfaced them in a dedicated contract section rather than burying them — Acme will push, but every one of these is standard counter-position territory.
+- Priced the 99.99% SLA uplift transparently ($100K/yr, midpoint of the $80K–$120K range) rather than hiding it. Legal still redlines the termination clause in parallel.
+- Flagged sub-100ms streaming latency as a Q&A item rather than claiming fit — the product doc is explicit that we're not best-in-class there.
+- Leaned hard on the Initech (vs Fabric), Globex (vs Snowflake), and Stark (IP model) comparables throughout — these are our sharpest proof points for a bake-off against three bigger-name competitors.
+
+No BTS branding skill or docx skill was available in the environment, so I built the branded document directly with python-docx using a consistent navy/teal palette, cover page, section rules, shaded header rows, and a confidentiality footer. The commercial recommendation markdown that the Pricing Specialist dropped into `/mnt/session/outputs/acme-corp-commercial-recommendation.md` is left in place as a working artefact; the docx is the proposal deliverable.

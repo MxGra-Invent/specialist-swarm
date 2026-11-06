@@ -1,0 +1,38 @@
+{
+  "title": "Acme Corp \u2014 Enterprise Data Platform Proposal",
+  "total": 5,
+  "slides": [
+    {
+      "n": 1,
+      "title": "Executive summary",
+      "status": "done",
+      "rev": 1
+    },
+    {
+      "n": 2,
+      "title": "What Acme needs",
+      "status": "done",
+      "rev": 1
+    },
+    {
+      "n": 3,
+      "title": "Why BTS-Synthetic",
+      "status": "done",
+      "rev": 1
+    },
+    {
+      "n": 4,
+      "title": "Commercial proposal",
+      "status": "done",
+      "rev": 1
+    },
+    {
+      "n": 5,
+      "title": "Contract approach, risks & next step",
+      "status": "done",
+      "rev": 1
+    }
+  ],
+  "log": "Five-slide Acme deck written to `/mnt/session/outputs/deck/` \u2014 outline plus slides 1\u20135 covering exec summary, customer need, why us, $704K c",
+  "phase": "done"
+}
